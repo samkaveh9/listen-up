@@ -19,6 +19,7 @@ class Music extends Model
         "image",
         "file",
         "artist_id",
+        "view"
     ];
 
     public function artist()
@@ -29,6 +30,12 @@ class Music extends Model
     public function albums()
     {
         return $this->belongsToMany(Album::class);
+    }
+
+    public function incrementViewCount()
+    {
+        $this->view++;
+        return $this->save();
     }
 
 }

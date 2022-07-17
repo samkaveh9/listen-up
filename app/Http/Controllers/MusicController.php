@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Artist;
 use App\Models\Music;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MusicController extends Controller
 {
@@ -47,7 +48,7 @@ class MusicController extends Controller
             $srcName = date('Ymdhis') . '.' . $srcExtension;
             $src->move(storage_path('app/public/musics/'), $srcName);
 
-            Music::create(array_merge($request->only('title', 'artist_id', 'content'), ['image' => $fileName], ['file' => $srcName]));
+            Music::create(array_merge($request->only('title', 'artist_id', 'content'), ['image' => $fileName], ['file' => $srcName], ['view' => 0]));
         }
         return redirect(route('musics.index'))->with('message', 'Music created succesfully!');
     }
@@ -60,7 +61,13 @@ class MusicController extends Controller
      */
     public function show(Music $music)
     {
-        //
+        $music->incrementViewCount();
+//        $mostViews = $music->query()->where('view', '>', '100')
+//            ->orderBy('view','asc')->take(4)->get();
+
+        $mostViews = maxViews(4);
+
+        return view('single', compact(['music', 'mostViews']));
     }
 
     /**
@@ -96,4 +103,7 @@ class MusicController extends Controller
     {
         //
     }
+
+
+
 }
